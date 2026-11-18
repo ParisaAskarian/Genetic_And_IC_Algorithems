@@ -24,3 +24,8 @@ Based on their costs, the countries are divided into two groups:
 The colonies gradually move toward their respective imperialists. If a colony becomes stronger than its imperialist and successfully takes over its position, it becomes an imperialist itself.
 
 This process continues through imperialistic competition until the objective function reaches its minimum value, ideally leaving only one imperialist.
+
+## Contributors
+
+- Parisa Askarian – Developer
+- Ala Zahedifar – Developer
