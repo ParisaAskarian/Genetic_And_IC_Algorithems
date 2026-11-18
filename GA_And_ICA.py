@@ -1,10 +1,10 @@
 import numpy as np
 
-# تابع هدف: هدف رسیدن به کمترین مقدار (صفر) است
+# the objective function must be minimum
 def objective_function(x):
     return np.sum(np.square(x))
 
-problem_dim = 5      # تعداد متغیرهای تابع
+problem_dim = 5      # the number of problems
 lower_bound = -10
 upper_bound = 10
 pop_size = 20
@@ -12,51 +12,51 @@ max_iter = 100
 
 # --- (GA) ---
 def genetic_algorithm():
-    # تولید جمعیت اولیه
+    # make the population
     pop = np.random.uniform(lower_bound, upper_bound, (pop_size, problem_dim))
     
     for gen in range(max_iter):
-        # محاسبه برازندگی (معکوس مقدار تابع چون مینیمم می خواهیم)
+        # caculate the score
         scores = np.array([objective_function(ind) for ind in pop])
         
-        # انتخاب (ساده: انتخاب بهترین ها)
+        # choose the best ones in papulation
         best_indices = np.argsort(scores)[:pop_size//2]
         parents = pop[best_indices]
         
-        # تولید فرزندان (Crossover ساده: میانگین والدین)
+        # make the childrens( crossover )
         offspring = []
         for i in range(0, len(parents), 2):
             child = (parents[i] + parents[i+1]) / 2
-            offspring.append(child + np.random.normal(0, 0.1, problem_dim)) # به همراه کمی جهش
+            offspring.append(child + np.random.normal(0, 0.1, problem_dim)) # with a little jump
             
-        pop = np.vstack((parents, offspring)) # جایگزینی جمعیت
+        pop = np.vstack((parents, offspring)) # replace the papulation
         
     best_score = np.min([objective_function(ind) for ind in pop])
     return best_score
 
 # --- (ICA) ---
 def imperialist_competitive():
-    # تولید کشورها
+    # make the countries
     countries = np.random.uniform(lower_bound, upper_bound, (pop_size, problem_dim))
     costs = np.array([objective_function(c) for c in countries])
     
-    # تفکیک امپریالیست و مستعمره (۲ امپراتوری)
+    # seperation the imperials and colonies
     idx = np.argsort(costs)
     imperials = countries[idx[:2]]
     colonies = countries[idx[2:]]
     
     for it in range(max_iter):
-        # جذب (Assimilation): حرکت مستعمرات به سمت امپریالیست ها
+        # Assimilation : colonies moving to imperials
         for i in range(len(colonies)):
             target_imp = imperials[0] if i < len(colonies)//2 else imperials[1]
-            # حرکت آرام به سمت امپریالیست
+            # moving slowlly
             colonies[i] += 0.2 * (target_imp - colonies[i]) 
             
-        # محاسبه هزینه های جدید
+        # caculate the new costs
         costs_col = np.array([objective_function(c) for c in colonies])
         costs_imp = np.array([objective_function(c) for c in imperials])
         
-        # رقابت ساده: اگر مستعمره ای بهتر از امپریالیست شد، جایش را عوض می کند
+        # if a coloni is better than a imperial, replace it
         for i in range(len(colonies)):
             imp_idx = 0 if i < len(colonies)//2 else 1
             if costs_col[i] < costs_imp[imp_idx]:
